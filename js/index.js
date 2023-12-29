@@ -113,6 +113,10 @@ const groupsEnum = [
     }
 ]
 
+const getValue = (prop) => {
+    return document.getElementById(prop).value;
+}
+
 const checkButtonState = (list) => {
     let state = false;
     list.forEach(group => {
@@ -122,6 +126,8 @@ const checkButtonState = (list) => {
     });
 
     if (state) {
+        state = getValue("usCode") !== "" && Number(getValue("daysActivity")) > 0;
+
         document.getElementById("saveButton").classList.remove("disabled");
     }
 }
