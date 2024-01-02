@@ -184,7 +184,7 @@ const readCookie = () => {
     let arrayCookie = decodedCookie.split(";");
     arrayCookie.forEach(cookie => {
         if (cookie.indexOf("NGSESSION") === -1) {
-            loadCookie(excludeDate(cookie).split("="));
+            loadCookie(excludeDate(cookie).trim().split("="));
         }
     });
 }
