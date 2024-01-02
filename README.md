@@ -1,3 +1,6 @@
+How to use? 
+R: node server.js
+
 Checklist US <MINHA_US>
 
 [ ] Ler a proposta da US/OS
