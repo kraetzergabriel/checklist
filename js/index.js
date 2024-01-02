@@ -113,22 +113,32 @@ const groupsEnum = [
     }
 ]
 
+const getData = {
+
+}
+
+
 const getValue = (prop) => {
     return document.getElementById(prop).value;
 }
 
 const checkButtonState = (list) => {
-    let state = false;
+    let state = true;
     list.forEach(group => {
         group.children.forEach(op => {
-            state = op.value;
+            if (state) {
+                state = op.value;
+            }
         })
     });
 
-    if (state) {
-        state = getValue("usCode") !== "" && Number(getValue("daysActivity")) > 0;
+    if (state &&
+        getValue("usCode") !== "" &&
+        Number(getValue("daysActivity")) > 0) {
 
         document.getElementById("saveButton").classList.remove("disabled");
+    } else {
+        document.getElementById("saveButton").classList.add("disabled");
     }
 }
 
@@ -158,7 +168,7 @@ const loadCookie = (_op) => {
     } else if (_op[0] === "daysActivity") {
         setValueOnField("daysActivity", _op[1]);
     }
-    checkItem(groupsEnum, _op[0], Boolean(_op[1]))
+    checkItem(groupsEnum, _op[0], _op[1] === 'true');
 }
 
 const excludeDate = (cookie) => {
@@ -176,13 +186,26 @@ const readCookie = () => {
         if (cookie.indexOf("NGSESSION") === -1) {
             loadCookie(excludeDate(cookie).split("="));
         }
-    })
+    });
 }
 
 const saveCookie = (children, day) => {
     children.forEach(op => {
         setCookie(op.text, op.value, day)
-    })
+    });
+}
+
+const actionClick = (item, id) => {
+    checkItem(groupsEnum, item.text, document.getElementById(id).checked);
+    setCookie(item.text, Boolean(document.getElementById(id).checked), Number(document.getElementById("daysActivity").value));
+    checkButtonState(groupsEnum);
+}
+
+const actionBlur = (id) => {
+    if (document.getElementById(id)) {
+        setCookie(id, document.getElementById(id).value,document.getElementById("daysActivity").value)
+    }
+    checkButtonState(groupsEnum);
 }
 
 const createElementItem = (element = "INPUT", type, styleClass) => {
@@ -210,12 +233,6 @@ const createLabel = (item, reference) => {
     return label;
 }
 
-const actionClick = (item, id) => {
-    checkItem(groupsEnum, item.text, Boolean(document.getElementById(id).value));
-    setCookie(item.text, Boolean(document.getElementById(id).value), Number(document.getElementById("daysActivity").value));
-    checkButtonState(groupsEnum);
-}
-
 const createCheckBox = (item, father, id) => {
     father.appendChild(document.createElement("br"));
     const element= createElementItem("input", getAttribute(), "form-check-input");
@@ -231,8 +248,18 @@ const createCheckBox = (item, father, id) => {
     father.appendChild(createLabel(item,id))
 }
 
-const setCookieHeader = () => {
+const createInputFields= (id, type, placeholder, value, onBlurAction) => {
+    const element = createElementItem("input", getAttribute("type",type), "form-control");
+    element.setAttribute("placeholder", placeholder);
+    element.setAttribute("id", id);
+    if (value) {
+        element.setAttribute("value", value);
+    }
 
+    if (onBlurAction) {
+        element.addEventListener("blur", () => onBlurAction(id));
+    }
+    return element;
 }
 
 const prepareItems = (group, father) => {
@@ -270,7 +297,7 @@ const doFile = (text, filename) => {
     document.body.appendChild(element);
 
     element.click();
-    document.removeChild(element);
+    document.body.removeChild(element);
 }
 
 const downloadTemplate = () => {
@@ -288,9 +315,13 @@ const save = () => {
     groupsEnum.forEach(children => {
         saveCookie(children,-1);
     });
+    window.location.reload();
 }
 
 const init = () => {
+    const root = document.getElementById("fieldGroup");
+    root.appendChild(createInputFields("usCode","text","US","", actionBlur));
+    root.appendChild(createInputFields("daysActivity","number","Days to do this US","1", actionBlur));
     readCookie();
     groupsEnum.forEach((group) => prepareItems(group,  document.getElementById("principal")));
 }

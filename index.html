@@ -10,14 +10,9 @@
     <nav class="navbar navbar-inverse">
         <div class="container">
             <form>
-                <div class="input-group">
-                    <input type="text" id="usCode" class="form-control" placeholder="US">
-<!--                           onblur="setCookie('usCode',Number(document.getElementById('usCode').value),Number(document.getElementById('daysActivity').value))">-->
-                    <input type="number" value="1" id="daysActivity" class="form-control" placeholder="Days to do this US">
-<!--                           onblur="setCookie('daysActivity',Number(document.getElementById('daysActivity').value),Number(document.getElementById('daysActivity').value))">-->
-                </div>
+                <div id="fieldGroup" class="input-group"></div>
                 <div class="form-check container" id="principal"></div>
-                <button class="btn btn-lg btn-primary disabled" type="submit" id="saveButton" onclick="save()"> Salvar </button>
+                <button class="btn btn-lg btn-primary disabled" type="button" id="saveButton" onclick="save()"> Salvar </button>
             </form>
         </div>
     </nav>
