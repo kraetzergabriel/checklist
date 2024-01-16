@@ -1,103 +1,134 @@
 const gitActions = [
     {
         text: "git fetch",
-        value: false
+        value: false,
+        action: () => {}
     },
     {
         text: "git checkout art_clinical_pharmacy",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "git pull origin art_clinical_pharmacy(se houver dúvidas sobre a atualização da branch)",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "git checkout -b SO_MINHA_OS",
-        value: false
+        value: false,
+        action: () =>{}
     }
 ]
 
-const princpalActions = [
+const principalActions = [
     {
-        text: "Ler a proposta da US/OS",
-        value: false
+        text: "Atualizar status da US e feature (mover o card)",
+        value: false,
+        action: () =>{}
     },
     {
-        text: "Se for US, verificar a existência de uma OS(verificar o status da OS), se não existir, cria-se uma",
-        value: false
+        text: "Ler a proposta da US/OS",
+        value: false,
+        action: () =>{}
+    },
+    {
+        text: "Se for US, verificar a existência de uma OS(verificar o campo External ID e/ou status da OS), se não existir, cria-se uma",
+        value: false,
+        action: () =>{}
     },
     {
         text: "Pedir CCB para analistas",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Iniciar atividade na OS",
-        value: false
-    },
+        value: false,
+        action: () =>{}
+    }
 ]
 
 const codingActions = [
     {
         text: "criar pacote(se necessário) no schematics (usar base osbatutinhas)",
-        value: false
+        value: false,
+        action: () =>{}
+    },
+    {
+        text: "Criar os objetos/classes/arquivos seguindo o padrão de nomenclatura criado no schematics",
+        value: false,
+        action: () =>{}
     },
     {
         text: "Estou codificando",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Tirar dúvidas",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Testar",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Testar com algum analista",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Abrir PR(corrigir checks, se necessário)",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Testar novamente caso tenha sido ajustado algum check no pr/code review",
-        value: false
+        value: false,
+        action: () =>{}
     }
 ]
 
 const documentationActions = [
     {
         text: "Gravar vídeo e anexar no card e na OS",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Adicionar link do pr no card( Add Link -> Existing Item -> GitHub Pull Request)",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Adicionar um texto explicando a alteração e o novo comportamento",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Verificar PRS",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Vincular número da OS no card",
-        value: false
+        value: false,
+        action: () =>{}
     },
     {
         text: "Mover o card para test",
-        value: false
+        value: false,
+        action: () =>{}
     }
 ]
 
 const groupsEnum = [
     {
         text: "Principal",
-        children: princpalActions
+        children: principalActions
     },
     {
         text: "Acessar os repositórios do tasy, tasy-backend e tasy-plsql e executar os comandos em sequência:",
@@ -112,11 +143,6 @@ const groupsEnum = [
         children: documentationActions
     }
 ]
-
-const getData = {
-
-}
-
 
 const getValue = (prop) => {
     return document.getElementById(prop).value;
@@ -179,12 +205,20 @@ const excludeDate = (cookie) => {
     return cookie.substring(0, excludeString - 1);
 }
 
-const readCookie = () => {
+const readCookie = (cookie) => {
+    loadCookie(cookie);
+}
+
+const deleteCookie = (cookie) => {
+    setCookie(cookie[0], cookie[1], 0);
+}
+
+const iterateCookie = (action) => {
     let decodedCookie = decodeURIComponent(document.cookie);
     let arrayCookie = decodedCookie.split(";");
     arrayCookie.forEach(cookie => {
         if (cookie.indexOf("NGSESSION") === -1) {
-            loadCookie(excludeDate(cookie).trim().split("="));
+            action(excludeDate(cookie.trim()).split("="));
         }
     });
 }
@@ -201,8 +235,8 @@ const actionClick = (item, id) => {
     checkButtonState(groupsEnum);
 }
 
-const actionBlur = (id) => {
-    if (document.getElementById(id)) {
+const blurAction = (id) => {
+    if (document.getElementById(id) && document.getElementById(id).value) {
         setCookie(id, document.getElementById(id).value,document.getElementById("daysActivity").value)
     }
     checkButtonState(groupsEnum);
@@ -315,13 +349,13 @@ const save = () => {
     groupsEnum.forEach(children => {
         saveCookie(children,-1);
     });
-    window.location.reload();
+    iterateCookie(deleteCookie);
 }
 
 const init = () => {
     const root = document.getElementById("fieldGroup");
-    root.appendChild(createInputFields("usCode","text","US","", actionBlur));
-    root.appendChild(createInputFields("daysActivity","number","Days to do this US","1", actionBlur));
-    readCookie();
+    root.appendChild(createInputFields("usCode","text","US","", blurAction));
+    root.appendChild(createInputFields("daysActivity","number","Days to do this US","1", blurAction));
+    iterateCookie(readCookie);
     groupsEnum.forEach((group) => prepareItems(group,  document.getElementById("principal")));
 }
