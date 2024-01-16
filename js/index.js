@@ -38,6 +38,11 @@ const principalActions = [
         action: () =>{}
     },
     {
+        text: "Vincular número da OS no card",
+        value: false,
+        action: () =>{}
+    },
+    {
         text: "Pedir CCB para analistas",
         value: false,
         action: () =>{}
@@ -114,7 +119,7 @@ const documentationActions = [
         action: () =>{}
     },
     {
-        text: "Vincular número da OS no card",
+        text: "Liberar release notes.",
         value: false,
         action: () =>{}
     },
@@ -122,6 +127,11 @@ const documentationActions = [
         text: "Mover o card para test",
         value: false,
         action: () =>{}
+    },
+    {
+        text: "Conferir itens pendentes na OS, utilizar a opção \'Visualizar inconsistências da OS\'(ctrl+alt+i)",
+        value: false,
+        action: ()=>{}
     }
 ]
 
