@@ -7,14 +7,55 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body onload="init()">
-    <nav class="navbar navbar-inverse">
-        <div class="container">
-            <form>
-                <div id="fieldGroup" class="input-group"></div>
-                <div class="form-check container" id="principal"></div>
-                <button class="btn btn-lg btn-primary disabled" type="button" id="saveButton" onclick="save()"> Salvar </button>
-            </form>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="card w-50">
+                <h5 class="card-title text-center">
+                    Checklist
+                </h5>
+                <div class="card-body">
+                    <form>
+                        <div id="fieldGroup" class="input-group"></div>
+                        <div class="form-check container" id="principal"></div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <button class="btn btn-lg btn-primary disabled" type="button" id="saveButton" onclick="save()"> Salvar </button>
+                </div>
+            </div>
+
+
+            <div class="card w-50 text-center">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="cardAddItemsButton" onclick="toggleDivItems(false)" > Add Item </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="cardListItemsButton" onclick="toggleDivItems(true)" > To Do </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="cardAddItems" class="card-body" >
+                    <h5 class="card-title text-center"> Add Items </h5>
+                    <form>
+                        <div id="divAddItems" class="list-group"> </div>
+                        <button class="btn btn-lg btn-primary" type="button" id="buttonAddTask" onclick="setCookiesAdditionalInformation()"> Add task </button>
+                    </form>
+                </div>
+
+                <div id="cardListItems" class="card-body" style="display: none">
+                    <h5 class="card-title text-center"> List Items </h5>
+                    <form id="formListItems">
+                        <div id="divListItems" class="list-group">
+
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </nav>
+    </div>
 </body>
 </html>

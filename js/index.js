@@ -154,6 +154,11 @@ const groupsEnum = [
     }
 ]
 
+const additionalItems = {
+    text: "TO DO",
+    children:[]
+}
+
 const getValue = (prop) => {
     return document.getElementById(prop).value;
 }
@@ -178,24 +183,46 @@ const checkButtonState = (list) => {
     }
 }
 
+const setAdditionalItem = (_text) => {
+    additionalItems.children.push(_text);
+}
+
 const checkItem = (_list, _text, _value) => {
+    let find = false;
     _list.forEach(group => {
         group.children.forEach(op => {
             if (op.text === _text.trim()) {
                 op.value = _value;
+                find = true;
             }
         })
     });
+    if (!find) {
+        setAdditionalItem(_text);
+    }
 }
 
 const setValueOnField = (_id, _value) => {
     document.getElementById(_id).value = _value;
 }
 
-const setCookie = (_text, _value, _day) => {
+const setCookie = (_text, _value, _day, _isAdditional) => {
     const d = new Date();
     d.setTime(d.getTime() + (_day*24*60*60*1000));
-    document.cookie = _text +"="+_value+";" + "expires="+ d.toUTCString();
+    if (_isAdditional) {
+        document.cookie = _text + ";" + "expires=" + d.toUTCString();
+    } else {
+        document.cookie = _text + "=" + _value + ";" + "expires=" + d.toUTCString();
+    }
+}
+
+const setCookiesAdditionalInformation = () => {
+    const task = document.getElementById("task").value;
+    document.getElementById("task").value = "";
+    const daysTask = document.getElementById("daysTask").value;
+    document.getElementById("daysTask").value;
+    setCookie(task,null, daysTask);
+    setAdditionalItem(task);
 }
 
 const loadCookie = (_op) => {
@@ -203,8 +230,10 @@ const loadCookie = (_op) => {
         setValueOnField("usCode", _op[1]);
     } else if (_op[0] === "daysActivity") {
         setValueOnField("daysActivity", _op[1]);
+    } else {
+        checkItem(groupsEnum, _op[0], _op[1] === 'true');
     }
-    checkItem(groupsEnum, _op[0], _op[1] === 'true');
+
 }
 
 const excludeDate = (cookie) => {
@@ -220,7 +249,7 @@ const readCookie = (cookie) => {
 }
 
 const deleteCookie = (cookie) => {
-    setCookie(cookie[0], cookie[1], 0);
+    setCookie(cookie[0], cookie[1], -1);
 }
 
 const iterateCookie = (action) => {
@@ -277,9 +306,20 @@ const createLabel = (item, reference) => {
     return label;
 }
 
+const elementAddClasses = (element, classes) => {
+    if (classes.styles){
+        classes.styles.forEach(i => element.classList.add(i));
+    } else {
+        element.classList.add();
+    }
+
+    return element;
+}
+
+const styleCheckbox = "form-check-input";
 const createCheckBox = (item, father, id) => {
     father.appendChild(document.createElement("br"));
-    const element= createElementItem("input", getAttribute(), "form-check-input");
+    const element= createElementItem("input", getAttribute(), styleCheckbox);
     if (item.value) {
         element.setAttribute("value", item.value);
         element.setAttribute("checked", item.value);
@@ -290,6 +330,26 @@ const createCheckBox = (item, father, id) => {
     element.textContent = item.text;
     father.appendChild(element);
     father.appendChild(createLabel(item,id))
+}
+const createDiv = (_id, _styleClasses) => {
+    let divElement = document.createElement("div");
+    divElement = elementAddClasses(divElement,_styleClasses);
+    if (_id) {
+        divElement.id = _id;
+    }
+    return divElement
+}
+
+const createButton = (_id, _text, _styleClasses) => {
+    let button = document.createElement("button");
+    if (_styleClasses){
+        button = elementAddClasses(button,_styleClasses);
+    } else {
+        button = elementAddClasses(button, {styles:["btn","btn-lg","btn-primary", "disabled"]});
+    }
+    button.id = _id;
+
+    return button;
 }
 
 const createInputFields= (id, type, placeholder, value, onBlurAction) => {
@@ -309,8 +369,26 @@ const createInputFields= (id, type, placeholder, value, onBlurAction) => {
 const prepareItems = (group, father) => {
     if (group && group.children) {
         group.children.forEach((op, index) => {
-            createCheckBox(op, father, group.text+"_"+index);
+            const divSwitches = createDiv(null, {styles: ["form-check", "form-switch"]});
+            createCheckBox(op, divSwitches, group.text + "_" + index);
+            father.appendChild(divSwitches);
         })
+    }
+}
+
+const prepareAdditionalItem = (father, fatherList) => {
+    fatherList.removeChild(document.getElementById("divListItems"));
+    fatherList.appendChild(createDiv("divListItems", "list-group"))
+    if (additionalItems.children.length > 0) {
+        additionalItems.children.forEach((item,  index) => {
+            const p = document.createElement("p");
+            p.textContent = item;
+            document.getElementById("divListItems").appendChild(p);
+        });
+    }
+    if (!document.getElementById("task")) {
+        father.appendChild(createInputFields("task","text","Put your task to do",null,null));
+        father.appendChild(createInputFields("daysTask","number","days to do",null, null));
     }
 }
 
@@ -362,10 +440,36 @@ const save = () => {
     iterateCookie(deleteCookie);
 }
 
+const configureFieldGroupChecklist= () => {
+    const fieldGroupChecklist = document.getElementById("fieldGroup");
+    fieldGroupChecklist.appendChild(createInputFields("usCode","text","US","", blurAction));
+    fieldGroupChecklist.appendChild(createInputFields("daysActivity","number","Days to do this US","1", blurAction));
+
+    return fieldGroupChecklist;
+}
+
+const setStyleNav = (addItem, removeItem) => {
+    document.getElementById(addItem).classList.add("active");
+    document.getElementById(removeItem).classList.remove("active");
+}
+
+const toggleDivItems = (isCardListItem) => {
+    if (isCardListItem) {
+        document.getElementById("cardAddItems").style.display = "none";
+        document.getElementById("cardListItems").style.display = "contents";
+        setStyleNav("cardListItemsButton", "cardAddItemsButton");
+    } else {
+        document.getElementById("cardListItems").style.display = "none";
+        document.getElementById("cardAddItems").style.display= "contents";
+        setStyleNav("cardAddItemsButton", "cardListItemsButton")
+    }
+
+    prepareAdditionalItem(null, document.getElementById("formListItems"));
+}
+
 const init = () => {
-    const root = document.getElementById("fieldGroup");
-    root.appendChild(createInputFields("usCode","text","US","", blurAction));
-    root.appendChild(createInputFields("daysActivity","number","Days to do this US","1", blurAction));
+    configureFieldGroupChecklist();
     iterateCookie(readCookie);
     groupsEnum.forEach((group) => prepareItems(group,  document.getElementById("principal")));
+    prepareAdditionalItem(document.getElementById("divAddItems"),document.getElementById("formListItems"));
 }
