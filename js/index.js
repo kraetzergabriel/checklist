@@ -15,7 +15,7 @@ const gitActions = [
         action: () =>{}
     },
     {
-        text: "git checkout -b SO_MINHA_OS",
+        text: "git checkout -b MINHA_OS",
         value: false,
         action: () =>{}
     }
@@ -130,6 +130,16 @@ const documentationActions = [
     },
     {
         text: "Conferir itens pendentes na OS, utilizar a opção \'Visualizar inconsistências da OS\'(ctrl+alt+i)",
+        value: false,
+        action: ()=>{}
+    },
+    {
+        text: "Conferir se os pacotes do schematics foram enviados",
+        value: false,
+        action: ()=>{}
+    },
+    {
+        text: "Conferir itens do PR para pre_main",
         value: false,
         action: ()=>{}
     }
