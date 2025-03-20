@@ -17,7 +17,7 @@ const gitActions = [
     {
         text: "git checkout -b MINHA_OS",
         value: false,
-        action: () =>{}
+        action: () =>{alert('chama')}
     }
 ]
 
@@ -336,7 +336,7 @@ const createCheckBox = (item, father, id) => {
     }
     element.setAttribute("name", item.text);
     element.setAttribute("id", id);
-    element.addEventListener("click", () => actionClick(item,  id));
+    element.addEventListener("click", item.action);
     element.textContent = item.text;
     father.appendChild(element);
     father.appendChild(createLabel(item,id))
@@ -456,6 +456,13 @@ const configureFieldGroupChecklist= () => {
     fieldGroupChecklist.appendChild(createInputFields("daysActivity","number","Days to do this US","1", blurAction));
 
     return fieldGroupChecklist;
+}
+
+const createTaskCard = () => {
+    const listTaks = document.getElementById('cardListItems');
+    let element = createDiv();
+
+    listTaks.appendChild(element);
 }
 
 const setStyleNav = (addItem, removeItem) => {
