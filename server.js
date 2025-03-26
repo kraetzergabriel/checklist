@@ -2,7 +2,7 @@ const fs = require("fs")
 const http = require("http");
 const path = require("path");
 
-const PORT = 666;
+const PORT = 4041;
 
 const MIME_TYPES = {
     default: "application/octet-stream",
