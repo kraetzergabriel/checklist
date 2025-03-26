@@ -17,7 +17,7 @@ const gitActions = [
     {
         text: "git checkout -b MINHA_OS",
         value: false,
-        action: () =>{}
+        action: () =>{ alert('chama')}
     }
 ]
 
@@ -92,6 +92,11 @@ const codingActions = [
     },
     {
         text: "Testar novamente caso tenha sido ajustado algum check no pr/code review",
+        value: false,
+        action: () =>{}
+    },
+    {
+        text: "Verificar pacote utilizando o select na tabela log_data, checar caso tenha alterações de pacote sem OS informada no log",
         value: false,
         action: () =>{}
     }
