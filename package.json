@@ -1,5 +1,5 @@
 {
-  "name": "checklistTemplate",
+  "name": "checklist_template",
   "version": "1.0.0",
   "main": "server.js",
   "devDependencies": {
