@@ -2,7 +2,7 @@ const fs = require("fs")
 const http = require("http");
 const path = require("path");
 
-const PORT = 4041;
+const PORT = 8081;
 
 const MIME_TYPES = {
     default: "application/octet-stream",
@@ -11,7 +11,7 @@ const MIME_TYPES = {
     css: "text/css"
 };
 
-const STATIC_PATH = path.join(process.cwd(), "./");
+const STATIC_PATH = path.join(process.cwd(), "./src");
 
 const toBool = [() => true, () => false];
 
