@@ -41,13 +41,10 @@ const post = (req, res) => {
 
         fs.writeFile('./data.json', JSON.stringify(jsonData, null, 2), (error) => {
             if (error) {
-                res.writeHead(500, {'content-type': 'application/json'})
-                res.end(JSON.stringify({message: 'manda esse json certo seu arrombado'}))
+                res.writeHead(500, {'content-type': 'application/json'});
+                res.end(JSON.stringify({message: 'manda esse json certo seu arrombado'}));
             }
         })
-
-        res.writeHead(200, {"content-type": 'application/json'})
-        res._end(JSON.stringify({message: 'save successful'}))
     })
 }
 

@@ -1,15 +1,5 @@
 // TODO criar serializacao e deserializacao do arquivo data.json, este substituira o uso dos cookies
 
-// fetch('?', {})
-//     .then((response) => {
-//         if (!response.ok) {
-//             throw new Error('Fetch data failed');
-//         }
-//         return response.json();
-//     }).catch((error) => {
-//         console.log(error);
-//     })
-
 class ApiFetch {
     constructor() {
 // TODO nothing yet
