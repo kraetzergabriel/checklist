@@ -1,0 +1,35 @@
+POST http://localhost:8081/
+Content-Type: application/json
+
+{
+  "card": [],
+  "checklist": {
+    "gitActions": [
+      {
+        "text": "git fetch",
+        "value": false,
+        "action": {}
+      },
+      {
+        "text": "git checkout art_clinical_pharmacy",
+        "value": false,
+        "action": {
+        }
+      },
+      {
+        "text": "git pull origin art_clinical_pharmacy(se houver dúvidas sobre a atualização da branch)",
+        "value": false,
+        "action": {
+        }
+      },
+      {
+        "text": "git checkout -b MINHA_OS",
+        "value": false,
+        "action": {
+        }
+      }
+    ]
+  }
+}
+
+###
