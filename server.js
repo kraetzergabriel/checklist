@@ -27,15 +27,40 @@ const prepareFile = async (url) => {
     const streamPath = found ? filePath : STATIC_PATH + "/404.html";
     const ext = path.extname(streamPath).substring(1).toLowerCase();
     const stream = fs.createReadStream(streamPath);
-    return { found, ext, stream };
+    return {found, ext, stream};
 };
+
+const post = (req, res) => {
+    let body = '';
+    req.on('data', (chunk) => {
+        body += chunk.toString();
+    });
+
+    req.on('end', () => {
+        const jsonData = JSON.parse(body);
+
+        fs.writeFile('./data.json', JSON.stringify(jsonData, null, 2), (error) => {
+            if (error) {
+                res.writeHead(500, {'content-type': 'application/json'})
+                res.end(JSON.stringify({message: 'manda esse json certo seu arrombado'}))
+            }
+        })
+
+        res.writeHead(200, {"content-type": 'application/json'})
+        res._end(JSON.stringify({message: 'save successful'}))
+    })
+}
 
 http
     .createServer(async (req, res) => {
+        if (req.method === 'POST') {
+            post(req, res)
+        }
+
         const file = await prepareFile(req.url);
         const statusCode = file.found ? 200 : 404;
         const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
-        res.writeHead(statusCode, { "Content-Type": mimeType });
+        res.writeHead(statusCode, {"Content-Type": mimeType});
         file.stream.pipe(res);
         console.log(`${req.method} ${req.url} ${statusCode}`);
     })
