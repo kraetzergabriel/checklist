@@ -1,3 +1,18 @@
+const header = [
+    {
+        id: "usCode",
+        type: "text",
+        placeHolder: "US",
+        value: ""
+    },
+    {
+        id: "daysActivity",
+        type: "number",
+        placeHolder: "Days to do this US",
+        value: 1
+    }
+];
+
 const gitActions = [
     {
         text: "git fetch",
