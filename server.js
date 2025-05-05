@@ -1,6 +1,7 @@
 const fs = require("fs")
 const http = require("http");
 const path = require("path");
+const {events, knowingHosts} = require("./src/api/events.js")
 
 const PORT = 8081;
 
@@ -13,7 +14,6 @@ const MIME_TYPES = {
 
 const STATIC_PATH = path.join(process.cwd(), "./src");
 
-const toBool = [() => true, () => false];
 
 const prepareFile = async (url) => {
     const paths = [STATIC_PATH, url];
@@ -22,7 +22,13 @@ const prepareFile = async (url) => {
     }
     const filePath = path.join(...paths);
     const pathTraversal = !filePath.startsWith(STATIC_PATH);
-    const exists = await fs.promises.access(filePath).then(...toBool);
+    const exists = await fs.promises
+        .access(filePath)
+        .then(
+            () => true,
+            () => false
+        );
+
     const found = !pathTraversal && exists;
     const streamPath = found ? filePath : STATIC_PATH + "/404.html";
     const ext = path.extname(streamPath).substring(1).toLowerCase();
@@ -30,36 +36,18 @@ const prepareFile = async (url) => {
     return {found, ext, stream};
 };
 
-const post = (req, res) => {
-    let body = '';
-    req.on('data', (chunk) => {
-        body += chunk.toString();
-    });
-
-    req.on('end', () => {
-        const jsonData = JSON.parse(body);
-
-        fs.writeFile('./data.json', JSON.stringify(jsonData, null, 2), (error) => {
-            if (error) {
-                res.writeHead(500, {'content-type': 'application/json'});
-                res.end(JSON.stringify({message: 'manda esse json certo seu arrombado'}));
-            }
-        })
-    })
-}
-
 http
     .createServer(async (req, res) => {
-        if (req.method === 'POST') {
-            post(req, res)
+        if (knowingHosts[req.url] && events && events[req.method.toLowerCase()]) {
+            events[req.method.toLowerCase()](req, res);
+        } else {
+            const file = await prepareFile(req.url);
+            const statusCode = file.found ? 200 : 404;
+            const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
+            res.writeHead(statusCode, {"Content-Type": mimeType});
+            file.stream.pipe(res);
+            console.log(`${req.method} ${req.url} ${statusCode}`);
         }
-
-        const file = await prepareFile(req.url);
-        const statusCode = file.found ? 200 : 404;
-        const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
-        res.writeHead(statusCode, {"Content-Type": mimeType});
-        file.stream.pipe(res);
-        console.log(`${req.method} ${req.url} ${statusCode}`);
     })
     .listen(PORT);
 

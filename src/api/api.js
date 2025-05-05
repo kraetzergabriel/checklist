@@ -2,52 +2,47 @@
 
 class ApiFetch {
     constructor() {
-// TODO nothing yet
+        // TODO nothing yet
     }
 
-    async save(json) {
-        try {
-            const response = await fetch('http://localhost:8081/', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(json)
-            });
-            if (!response.ok) {
-                throw new Error('error')
-            }
-
-            console.log(`save successful ${response}`)
-        } catch (error) {
-            console.log(`save error ${error}`)
+    isValidResponse(response) {
+        if (!response.ok) {
+            throw new Error('error')
         }
+
+        if (response.json) {
+            return response.json()
+        }
+
+        console.log(`save successful ${response}`);
+        return Promise.resolve(null);
     }
 
-    async get(headers = {}) {
-        try {
-            const response = fetch('./data.json', headers);
-            if (!response.ok) {
-                throw new Error('error during fetching data.json');
-            }
-            return await response.json();
-        } catch (error) {
-            console.log(error);
-        }
-
-        return null;
+    treatCatch(error) {
+        console.log(`save error ${error}`)
     }
 
-    async getChecklistData() {
-        const data = this.get();
-        if (data.checklist && data.checklist.lenght > 0) {
-            return data.checklist;
-        }
+    save(json) {
+        const response = fetch('http://localhost:8081/', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(json)
+        })
+            .then(response => this.isValidResponse(response))
+            .catch(error => this.treatCatch(error));
+    }
+
+    get(headers = {}) {
+        return fetch('./data', headers)
     }
 
     saveChecklistData() {
+        // TODO it'll be used to save the up-to-dated checklist`s record into a data.json
     }
 
+    // TODO move to card routine
     getCardData() {
         const data = this.get();
         if (data.card && data.card.lenght > 0) {
@@ -56,6 +51,7 @@ class ApiFetch {
     }
 
     saveCardData() {
+        // TODO it'll be used to save the up-to-dated card`s record into a data.json
     }
 
 }
