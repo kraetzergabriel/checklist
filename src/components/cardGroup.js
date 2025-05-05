@@ -2,7 +2,6 @@ export class CardGroup extends HTMLElement {
     constructor() {
         super();
         this.element = this.attachShadow({mode: 'open'});
-        this.render();
     }
 
     static get observedAttributes() {

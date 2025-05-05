@@ -1,5 +1,7 @@
 import {groupsEnum} from '../static/static.js';
 import CookieManager, {additionalItems} from "../js/cookieManager.js";
+import {api} from "../api/api.js";
+import {createInputFields, createDiv} from "../utils/utils.js";
 
 export default class ChecklistForm extends HTMLElement {
     constructor() {
@@ -7,63 +9,59 @@ export default class ChecklistForm extends HTMLElement {
         this.element = this.attachShadow({mode: 'open'});
         this.styleCheckbox = "form-check-input";
         this.cookieManager = new CookieManager(this.element);
+        this.getChecklistData();
+
+        document.addEventListener('dataLoaded', this.render.bind(this))
     }
 
-    createLabel(item, reference) {
-        const label = this.createElementItem("label", this.cookieManager.getAttribute("for", reference), "form-check-label");
-        label.textContent = item.text;
-        return label;
+    getChecklistData() {
+        this.checklistData = [];
+        api.get({})
+            .then(response => {
+                api.isValidResponse(response)
+                    .then(data => this.load(data))
+            });
     }
 
-    elementAddClasses(element, classes) {
-        if (classes.styles) {
-            classes.styles.forEach(i => element.classList.add(i));
-        } else {
-            element.classList.add();
+    load(data) {
+        if (data && data.checklist && data.checklist.lenght > 0) {
+            this.checklistData = data.checklist;
+
+            const dataLoaded = new CustomEvent('dataLoaded', {
+                bubbles: true,
+                detail: {loaded: true}
+            })
         }
-
-        return element;
     }
 
-    createCheckBox(item, father, id) {
-        father.appendChild(document.createElement("br"));
-        const element = this.createElementItem("input", this.cookieManager.getAttribute(), this.styleCheckbox);
-        if (item.value) {
-            element.setAttribute("value", item.value);
-            element.setAttribute("checked", item.value);
-        }
-        element.setAttribute("name", item.text);
-        element.setAttribute("id", id);
-        element.addEventListener("click", () => this.actionClick(item, id));
-        element.textContent = item.text;
-        father.appendChild(element);
-        father.appendChild(this.createLabel(item, id))
+    setupEvents() {
+        // TODO used to setup events into elements
+        this.element.addEventListener('change', this.changeData.bind(this));
+        this.element.getElementById('saveButton').addEventListener('click', this.finish.bind(this));
     }
 
-    createDiv(_id, _styleClasses) {
-        let divElement = document.createElement("div");
-        divElement = this.elementAddClasses(divElement, _styleClasses);
-        if (_id) {
-            divElement.id = _id;
-        }
-        return divElement
+    removeEvents() {
+        this.element.removeEventListener('change', this.changeData);
+        this.element.getElementById('saveButton').remove('click', this.finish)
     }
 
-    createButton(_id, _text, _styleClasses) {
-        let button = document.createElement("button");
-        if (_styleClasses) {
-            button = this.elementAddClasses(button, _styleClasses);
-        } else {
-            button = this.elementAddClasses(button, {styles: ["btn", "btn-lg", "btn-primary", "disabled"]});
-        }
-        button.id = _id;
-
-        return button;
+    changeData() {
+        this.checkButtonState()
+        this.render()
     }
+
+    get visible() {
+        return true;//this.getAttribute('visible');
+    }
+
+    set visible(_value) {
+        this.setAttribute('visible', _value);
+    }
+
 
     prepareAdditionalItem(father, fatherList) {
         fatherList.removeChild(this.element.getElementById("divListItems"));
-        fatherList.appendChild(this.createDiv("divListItems", "list-group"))
+        fatherList.appendChild(createDiv("divListItems", "list-group"))
         if (additionalItems.children.length > 0) {
             additionalItems.children.forEach((item, index) => {
                 const p = document.createElement("p");
@@ -72,22 +70,22 @@ export default class ChecklistForm extends HTMLElement {
             });
         }
         if (!this.element.getElementById("task")) {
-            father.appendChild(this.createInputFields("task", "text", "Put your task to do", null, null));
-            father.appendChild(this.createInputFields("daysTask", "number", "days to do", null, null));
+            father.appendChild(createInputFields("task", "text", "Put your task to do", null, null));
+            father.appendChild(createInputFields("daysTask", "number", "days to do", null, null));
         }
     }
 
-    doFile(text, filename) {
-        const tempElement = document.createElement('a');
-        tempElement.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        tempElement.setAttribute('download', filename);
-
-        tempElement.style.display = 'none';
-        document.body.appendChild(tempElement);
-
-        tempElement.click();
-        document.body.removeChild(tempElement);
-    }
+    // doFile(text, filename) {
+    //     const tempElement = document.createElement('a');
+    //     tempElement.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    //     tempElement.setAttribute('download', filename);
+    //
+    //     tempElement.style.display = 'none';
+    //     document.body.appendChild(tempElement);
+    //
+    //     tempElement.click();
+    //     document.body.removeChild(tempElement);
+    // }
 
     actionClick(item, id) {
         this.checkItem(groupsEnum, item.text, this.element.getElementById(id).checked);
@@ -126,77 +124,18 @@ export default class ChecklistForm extends HTMLElement {
         this.checkButtonState(groupsEnum);
     }
 
-    formatItem(op) {
-        let result = "[ ]";
-        if (op && op.value) {
-            result = "[X]";
+    configureHeader(_header) {
+        const fieldGroupChecklist = this.element.getElementById("headerFields");
+        if (_header && _header.length > 0) {
+            _header.forEach(item => {
+                fieldGroupChecklist.appendChild(this.createInputFields(...item, this.blurAction))
+            })
         }
-
-        return result + " " + op.text;
     }
 
-
-    itemToString = (list) => {
-        let result = "";
-        list.forEach(op => {
-            result += "\n" + this.formatItem(op);
-        });
-
-        return result
+    configureBody(_groups) {
+        _groups.forEach(group => this.prepareItems(group, this.element.getElementById("principal")));
     }
-
-    downloadTemplate() {
-        let textForDownload = "Checklist US " + this.element.getElementById("usCode").value;
-        groupsEnum.forEach(group => {
-            textForDownload += "\n" + group.text;
-            textForDownload += "  -  " + this.itemToString(group.children);
-        })
-
-        this.doFile(textForDownload, "US_Checklist" + this.element.getElementById("usCode").value);
-    }
-
-    save() {
-        this.downloadTemplate();
-        groupsEnum.forEach(children => {
-            this.cookieManager.saveCookie(children, -1);
-        });
-        this.iterateCookie(this.cookieManager.deleteCookie.bind);
-    }
-
-    createElementItem(element = "INPUT", type, styleClass) {
-        const item = document.createElement(element);
-        if (type) {
-            item.setAttribute(type.prop, type.attribute);
-        }
-        if (styleClass) {
-            item.classList.add(styleClass);
-        }
-
-        return item;
-    }
-
-    createInputFields(id, type, placeholder, value, onBlurAction) {
-        const element = this.createElementItem("input", this.cookieManager.getAttribute("type", type), "form-control");
-        element.setAttribute("placeholder", placeholder);
-        element.setAttribute("id", id);
-        if (value) {
-            element.setAttribute("value", value);
-        }
-
-        if (onBlurAction) {
-            element.addEventListener("blur", () => onBlurAction(id));
-        }
-        return element;
-    }
-
-    configureFieldGroupChecklist() {
-        const fieldGroupChecklist = this.element.getElementById("fieldGroup");
-        fieldGroupChecklist.appendChild(this.createInputFields("usCode", "text", "US", "", this.blurAction));
-        fieldGroupChecklist.appendChild(this.createInputFields("daysActivity", "number", "Days to do this US", "1", this.blurAction));
-
-        return fieldGroupChecklist;
-    }
-
 
     prepareItems(group, father) {
         if (group && group.children) {
@@ -209,35 +148,50 @@ export default class ChecklistForm extends HTMLElement {
     }
 
     connectedCallback() {
-        this.render();
+        this.body();
+        this.setupEvents();
 
-        this.configureFieldGroupChecklist();
-        this.cookieManager.iterateCookie(this.cookieManager.readCookie.bind);
-        groupsEnum.forEach((group) => this.prepareItems(group, this.element.getElementById("principal")));
-        this.prepareAdditionalItem(this.element.getElementById("divAddItems"), this.element.getElementById("formListItems"));
+        // this.cookieManager.iterateCookie(this.cookieManager.readCookie.bind);
+        // groupsEnum.forEach((group) => this.prepareItems(group, this.element.getElementById("principal")));
+        // this.prepareAdditionalItem(this.element.getElementById("divAddItems"), this.element.getElementById("formListItems"));
     }
 
     disconnectedCallback() {
         console.log(`${this.element} was removed from page`);
+        this.removeEvents();
     }
 
-    render() {
+    finish() {
+        // TODO save the date of finishing task
+    }
+
+    body() {
         this.element.innerHTML = `<div class="card" ${this.visible ? '' : 'style="display:none"'}>
             <h5 class="card-title text-center">
                 Checklist
             </h5>
             <div class="card-body">
                 <form>
-                    <div id="fieldGroup" class="input-group"></div>
+                    <div id="headerFields" class="input-group"></div>
                     <div class="form-check container" id="principal"></div>
                 </form>
             </div>
             <div class="card-footer text-center">
-                <button class="btn btn-lg btn-primary disabled" type="button" id="saveButton" onclick="save()"> Save
+                <button class="btn btn-lg btn-primary disabled" type="button" id="saveButton"> Finish checklist
                 </button>
             </div>
         </div>
         <link rel="stylesheet" href="../css/bootstrap.min.css">`;
+    }
+
+    render(event) {
+        if (event.default.loaded && this.checklistData.length > 0) {
+            const checklistItem = this.checklistData.filter(i => !i.finished);
+            this.configureHeader(checklistItem.header);
+            this.configureBody(checklistItem.groupsEnum);
+        }
+
+
     }
 }
 
