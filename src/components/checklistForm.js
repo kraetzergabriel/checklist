@@ -6,7 +6,6 @@ export default class ChecklistForm extends HTMLElement {
     constructor() {
         super();
         this.element = this.attachShadow({mode: 'open'});
-        this.styleCheckbox = "form-check-input";
 
         document.addEventListener('dataLoaded', this.render.bind(this))
     }
@@ -33,6 +32,14 @@ export default class ChecklistForm extends HTMLElement {
         }
     }
 
+    save(us, op) {
+        this.checklistData.forEach((item, index) => {
+            if (us && us === item.header.filter(i => i.id === 'usCode')[0].value || !item.finished) {
+                // TODO find item to update or figure out a new way to save this value
+            }
+        })
+    }
+
     setupEvents() {
         // TODO used to setup events into elements
         this.element.addEventListener('change', this.changeData.bind(this));
@@ -46,6 +53,8 @@ export default class ChecklistForm extends HTMLElement {
 
     changeData(event) {
         this.checkButtonState();
+        // TODO adjust this call
+        this.save();
         this.render()
     }
 
