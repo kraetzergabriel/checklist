@@ -1,15 +1,12 @@
 import {groupsEnum} from '../static/static.js';
-import CookieManager, {additionalItems} from "../js/cookieManager.js";
 import {api} from "../api/api.js";
-import {createInputFields, createDiv} from "../utils/utils.js";
+import {createInputFields, createDiv, createCheckBox} from "../utils/utils.js";
 
 export default class ChecklistForm extends HTMLElement {
     constructor() {
         super();
         this.element = this.attachShadow({mode: 'open'});
         this.styleCheckbox = "form-check-input";
-        this.cookieManager = new CookieManager(this.element);
-        this.getChecklistData();
 
         document.addEventListener('dataLoaded', this.render.bind(this))
     }
@@ -24,13 +21,15 @@ export default class ChecklistForm extends HTMLElement {
     }
 
     load(data) {
-        if (data && data.checklist && data.checklist.lenght > 0) {
+        if (data && data.checklist && data.checklist.length > 0) {
             this.checklistData = data.checklist;
 
             const dataLoaded = new CustomEvent('dataLoaded', {
                 bubbles: true,
                 detail: {loaded: true}
             })
+
+            document.dispatchEvent(dataLoaded);
         }
     }
 
@@ -45,8 +44,8 @@ export default class ChecklistForm extends HTMLElement {
         this.element.getElementById('saveButton').remove('click', this.finish)
     }
 
-    changeData() {
-        this.checkButtonState()
+    changeData(event) {
+        this.checkButtonState();
         this.render()
     }
 
@@ -56,41 +55,6 @@ export default class ChecklistForm extends HTMLElement {
 
     set visible(_value) {
         this.setAttribute('visible', _value);
-    }
-
-
-    prepareAdditionalItem(father, fatherList) {
-        fatherList.removeChild(this.element.getElementById("divListItems"));
-        fatherList.appendChild(createDiv("divListItems", "list-group"))
-        if (additionalItems.children.length > 0) {
-            additionalItems.children.forEach((item, index) => {
-                const p = document.createElement("p");
-                p.textContent = item;
-                this.element.getElementById("divListItems").appendChild(p);
-            });
-        }
-        if (!this.element.getElementById("task")) {
-            father.appendChild(createInputFields("task", "text", "Put your task to do", null, null));
-            father.appendChild(createInputFields("daysTask", "number", "days to do", null, null));
-        }
-    }
-
-    // doFile(text, filename) {
-    //     const tempElement = document.createElement('a');
-    //     tempElement.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    //     tempElement.setAttribute('download', filename);
-    //
-    //     tempElement.style.display = 'none';
-    //     document.body.appendChild(tempElement);
-    //
-    //     tempElement.click();
-    //     document.body.removeChild(tempElement);
-    // }
-
-    actionClick(item, id) {
-        this.checkItem(groupsEnum, item.text, this.element.getElementById(id).checked);
-        this.setCookie(item.text, Boolean(this.element.getElementById(id).checked), Number(this.element.getElementById("daysActivity").value));
-        this.checkButtonState(groupsEnum);
     }
 
     getValue(prop) {
@@ -128,7 +92,13 @@ export default class ChecklistForm extends HTMLElement {
         const fieldGroupChecklist = this.element.getElementById("headerFields");
         if (_header && _header.length > 0) {
             _header.forEach(item => {
-                fieldGroupChecklist.appendChild(this.createInputFields(...item, this.blurAction))
+                fieldGroupChecklist.appendChild(
+                    createInputFields(
+                        item.id,
+                        item.type,
+                        item.placeHolder,
+                        item.value,
+                        this.blurAction))
             })
         }
     }
@@ -140,8 +110,8 @@ export default class ChecklistForm extends HTMLElement {
     prepareItems(group, father) {
         if (group && group.children) {
             group.children.forEach((op, index) => {
-                const divSwitches = this.createDiv(null, {styles: ["form-check", "form-switch"]});
-                this.createCheckBox(op, divSwitches, group.text + "_" + index);
+                const divSwitches = createDiv(null, { styles: ["form-check", "form-switch"] });
+                createCheckBox(op, divSwitches, group.text + "_" + index);
                 father.appendChild(divSwitches);
             })
         }
@@ -150,6 +120,7 @@ export default class ChecklistForm extends HTMLElement {
     connectedCallback() {
         this.body();
         this.setupEvents();
+        this.getChecklistData();
 
         // this.cookieManager.iterateCookie(this.cookieManager.readCookie.bind);
         // groupsEnum.forEach((group) => this.prepareItems(group, this.element.getElementById("principal")));
@@ -185,13 +156,11 @@ export default class ChecklistForm extends HTMLElement {
     }
 
     render(event) {
-        if (event.default.loaded && this.checklistData.length > 0) {
-            const checklistItem = this.checklistData.filter(i => !i.finished);
+        if (event.detail.loaded && this.checklistData.length > 0) {
+            const checklistItem = this.checklistData.filter(i => !i.finished)[0];
             this.configureHeader(checklistItem.header);
             this.configureBody(checklistItem.groupsEnum);
         }
-
-
     }
 }
 

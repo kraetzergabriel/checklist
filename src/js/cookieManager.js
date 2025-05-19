@@ -1,22 +1,10 @@
 import {groupsEnum} from "../static/static.js";
 
-export const additionalItems = {
-    text: "TO DO",
-    children: []
-}
-
 export default class CookieManager extends Object{
 
     constructor(element) {
         super();
         this.element = element;
-    }
-
-    getAttribute(type = "type", value = "checkbox") {
-        return {
-            prop: type,
-            attribute: value
-        }
     }
 
     setCookie(_text, _value, _day, _isAdditional) {

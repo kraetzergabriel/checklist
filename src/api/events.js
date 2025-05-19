@@ -25,7 +25,7 @@ class Events {
         req.on('end', () => {
             const jsonData = JSON.parse(body);
 
-            fs.writeFile(jsonFileData, JSON.stringify(jsonData, null, 2), (error) => {
+            fs.writeFile(knowingHosts[req.url], JSON.stringify(jsonData, null, 2), (error) => {
                 if (error) {
                     res.writeHead(500, {'content-type': 'application/json'});
                     res.end(JSON.stringify({message: 'manda esse json certo seu arrombado'}));
