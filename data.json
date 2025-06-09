@@ -1,0 +1,191 @@
+{
+  "card": [{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  },{
+    "title": "teste",
+    "content": "testetestetestetestetestetestetestetesteteste",
+    "cardId": 0,
+    "status": "URGENT"
+  }],
+  "checklist": [
+    {
+      "header": [
+        {
+          "id": "usCode",
+          "type": "text",
+          "placeHolder": "US",
+          "value": ""
+        },
+        {
+          "id": "daysActivity",
+          "type": "number",
+          "placeHolder": "Days to do this US",
+          "value": "1"
+        }
+      ],
+      "groupsEnum": [
+        {
+          "text": "Principal",
+          "children": [
+            {
+              "text": "Atualizar status da US e feature (mover o card)",
+              "value": false
+            },
+            {
+              "text": "Ler a proposta da US/OS",
+              "value": false
+            },
+            {
+              "text": "Se for US, verificar a existência de uma OS(verificar o campo External ID e/ou status da OS), se não existir, cria-se uma",
+              "value": false
+            },
+            {
+              "text": "Vincular número da OS no card",
+              "value": false
+            },
+            {
+              "text": "Pedir CCB para analistas",
+              "value": false
+            },
+            {
+              "text": "Iniciar atividade na OS",
+              "value": false
+            }
+          ]
+        },
+        {
+          "text": "Acessar os repositórios do tasy, tasy-backend e tasy-plsql e executar os comandos em sequência:",
+          "children": [
+            {
+              "text": "git fetch",
+              "value": false
+            },
+            {
+              "text": "git checkout art_clinical_pharmacy",
+              "value": false
+            },
+            {
+              "text": "git pull origin art_clinical_pharmacy(se houver dúvidas sobre a atualização da branch)",
+              "value": false
+            },
+            {
+              "text": "git checkout -b MINHA_OS",
+              "value": false
+            }
+          ]
+        },
+        {
+          "text": "Codificação",
+          "children": [
+            {
+              "text": "criar pacote(se necessário) no schematics (usar base osbatutinhas)",
+              "value": false
+            },
+            {
+              "text": "Criar os objetos/classes/arquivos seguindo o padrão de nomenclatura criado no schematics",
+              "value": false
+            },
+            {
+              "text": "Estou codificando",
+              "value": false
+            },
+            {
+              "text": "Tirar dúvidas",
+              "value": false
+            },
+            {
+              "text": "Testar",
+              "value": false
+            },
+            {
+              "text": "Testar com algum analista",
+              "value": false
+            },
+            {
+              "text": "Abrir PR(corrigir checks, se necessário)",
+              "value": false
+            },
+            {
+              "text": "Testar novamente caso tenha sido ajustado algum check no pr/code review",
+              "value": false
+            },
+            {
+              "text": "Verificar pacote utilizando o select na tabela log_data, checar caso tenha alterações de pacote sem OS informada no log",
+              "value": false
+            }
+          ]
+        },
+        {
+          "text": "Documentação",
+          "children": [
+            {
+              "text": "Gravar vídeo e anexar no card e na OS",
+              "value": false
+            },
+            {
+              "text": "Adicionar link do pr no card( Add Link -> Existing Item -> GitHub Pull Request)",
+              "value": false
+            },
+            {
+              "text": "Adicionar um texto explicando a alteração e o novo comportamento",
+              "value": false
+            },
+            {
+              "text": "Verificar PRS",
+              "value": false
+            },
+            {
+              "text": "Liberar release notes.",
+              "value": false
+            },
+            {
+              "text": "Mover o card para test",
+              "value": false
+            },
+            {
+              "text": "Conferir itens pendentes na OS, utilizar a opção 'Visualizar inconsistências da OS '(ctrl+alt+i)",
+              "value": false
+            },
+            {
+              "text": "Conferir se os pacotes do schematics foram enviados",
+              "value": false
+            },
+            {
+              "text": "Conferir itens do PR para pre_main",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "finished": false
+    }
+  ]
+}

@@ -49,6 +49,7 @@ export default class ChecklistForm extends HTMLElement {
     removeEvents() {
         this.element.removeEventListener('change', this.changeData);
         this.element.getElementById('saveButton').remove('click', this.finish)
+        document.removeEventListener('dataLoaded', this.render);
     }
 
     changeData(event) {

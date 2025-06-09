@@ -4,6 +4,8 @@ import '../components/cardItem.js';
 import '../components/mainForm.js';
 import '../components/mainMenu.js';
 
+document.getElementById('app').appendChild(document.createElement('home-screen'));
+
 // const setStyleNav = (addItem, removeItem) => {
 //     document.getElementById(addItem).classList.add("active");
 //     document.getElementById(removeItem).classList.remove("active");
