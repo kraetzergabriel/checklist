@@ -93,10 +93,10 @@ export class CardGroup extends HTMLElement {
     }
 
     body() {
-        this.element.innerHTML = `<div id="cardListItems" class="card-body" style="display: none">
+        this.element.innerHTML = `<div id="cardListItems" class="card-body">
                 <h5 class="card-title text-center"> List Items </h5>
                 <form id="formListItems">
-                    <div id="divListItems" class="list-group">
+                    <div id="divListItems" class="row row-cols-1 row-cols-md-4">
  
                     </div>
                 </form>

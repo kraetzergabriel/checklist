@@ -76,12 +76,16 @@ export default class CardItem extends HTMLElement {
 
     render() {
         this.element.innerHTML = `
-            <div class="card text-bg-primary mb-3" style="max-width: 18rem;">
-              <div class="card-header" id="${this.getAttribute('cardId')}">Header</div>
-              <div class="card-body">
-                <h5 class="card-title">${this.getAttribute('title')}</h5>
-                <p class="card-text">${this.getAttribute('content')}</p>
-              </div>
+            <div class="col mb-4">
+                <div class="card">
+                    <div class="card text-bg-${this.getAttribute('status')}" style="max-width: 40rem;">
+                      <div class="card-header" id="${this.getAttribute('cardId')}">Header</div>
+                      <div class="card-body">
+                        <h5 class="card-title">${this.getAttribute('title')}</h5>
+                        <p class="card-text">${this.getAttribute('content')}</p>
+                      </div>
+                    </div>
+                </div>
             </div>
             <link rel="stylesheet" href="../css/bootstrap.min.css">
             `;

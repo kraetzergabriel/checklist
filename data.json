@@ -3,37 +3,37 @@
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "danger"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "success"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "danger"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "secondary"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "white"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "primary"
   },{
     "title": "teste",
     "content": "testetestetestetestetestetestetestetesteteste",
     "cardId": 0,
-    "status": "URGENT"
+    "status": "danger"
   }],
   "checklist": [
     {
