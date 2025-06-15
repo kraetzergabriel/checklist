@@ -9,8 +9,11 @@ class ApiFetch {
         return fetch('./data', headers)
     }
 
-    save(json) {
-        const response = fetch('http://localhost:8081/', {
+    saveCard(json) {
+        if (!json) {
+            return;
+        }
+        fetch('http://localhost:8081/saveCard', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'

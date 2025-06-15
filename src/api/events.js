@@ -7,14 +7,6 @@ export const knowingHosts = {
     '/saveChecklist': 'saveChecklist'
 }
 
-Array.prototype.update = function (value, prop) {
-    this.forEach((item, index) => {
-        if (item[prop] === value[prop]) {
-            this[index] = value;
-        }
-    });
-}
-
 class Events {
 
     constructor() {
@@ -22,20 +14,33 @@ class Events {
     }
 
     saveCard(jsonData) {
-        this.data.card.update(jsonData, 'cardId');
+        if (!jsonData.cardId || this.data.card.filter(i => i.cardId === jsonData.cardId).length === 0) {
+            this.data.card.push(jsonData);
+
+            return;
+        }
+
+        this.data.card.forEach((item, index) => {
+            if (item.cardId === jsonData.cardId) {
+                this[index] = jsonData;
+            }
+        });
     }
 
     saveChecklist(jsonData) {
-        this.data.card.update(jsonData, 'header[0].id');
+        this.data.checklist.forEach((item, index) => {
+            if (item.header.filter(i => i.id === 'usCode' && i.value === jsonData.usCode)) {
+                this[index] = jsonData;
+            }
+        });
     }
 
     backend() {
         throw new Error('Not implemented yet')
     }
 
-
-    saveFile(req, res,jsonData) {
-        fs.writeFile(knowingHosts[req.url], JSON.stringify(jsonData, null, 2),
+    saveFile(req, res, jsonData) {
+        fs.writeFile(knowingHosts['/data'], JSON.stringify(jsonData, null, 2),
             (error) => this.responseError(res, error));
     }
 
@@ -67,7 +72,7 @@ class Events {
             const method = this[knowingHosts[req.url]];
             if (method) {
                 fs.promises(method(jsonData))
-                    .then(() => this.saveFile(req,res, jsonData));
+                    .then(() => this.saveFile(req, res, this.data));
             }
         })
     }

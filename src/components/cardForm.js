@@ -1,4 +1,4 @@
-import CookieManager from "../js/cookieManager.js";
+import {api} from '../api/api.js';
 
 export default class CardForm extends HTMLElement {
     constructor() {
@@ -6,21 +6,35 @@ export default class CardForm extends HTMLElement {
         this.element = this.attachShadow({mode: 'open'});
     }
 
+    save(_event) {
+        if (_event) {
+            const card = {};
+            card.title = 'teste';
+            card.content = this.element.getElementById('content').value;
+            api.saveCard(card);
+        }
+    }
+
     setupEvents() {
-        this.element.getElementById('buttonAddTask').addEventListener('click', CookieManager.setCookiesAdditionalInformation);
+        this.element.getElementById('buttonAddTask').addEventListener('click', this.save.bind(this));
     }
 
     removeEvents() {
-        this.element.getElementById('buttonAddTask').remove('click', CookieManager.setCookiesAdditionalInformation);
+        this.element.getElementById('buttonAddTask').remove('click', this.save);
     }
 
     body() {
-        this.element.innerHTML = `<div id="cardAddItems" class="card-body">
+        this.element.innerHTML = `
+            <div id="cardAddItems" class="card-body">
                 <h5 class="card-title text-center"> Add Items </h5>
-                <form>
-                    <div id="divListCards" class="list-group"></div>
-                    <button class="btn btn-lg btn-primary" type="button" id="buttonAddTask"> Add task
-                    </button>
+                <form class="row g-3">
+                    <div class="coll-md-12 input-group">
+                      <span class="input-group-text">Explain your task</span>
+                      <textarea class="form-control" aria-label="With textarea" id="content"></textarea>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-lg btn-primary " type="button" id="buttonAddTask"> Add task </button>
+                    <div>
                 </form>
             </div> 
             <link rel="stylesheet" href="../css/bootstrap.min.css">`;
