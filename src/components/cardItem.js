@@ -1,3 +1,5 @@
+import {statusValues} from "../static/static";
+
 export default class CardItem extends HTMLElement {
     constructor() {
         super();
@@ -6,39 +8,15 @@ export default class CardItem extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['title', 'content', 'cardId', 'status']
+        return ['status'];
     }
 
-    get title() {
-        return this.getAttribute('title');
+    set status(_value){
+        this.setAttribute('status',_value);
     }
 
-    set title(_value) {
-        this.setAttribute('title', _value);
-    }
-
-    get content() {
-        return this.getAttribute('content');
-    }
-
-    set content(_value) {
-        this.setAttribute('content', _value);
-    }
-
-    get status() {
-        this.getAttribute('status')
-    }
-
-    set status(_value) {
-        this.setAttribute('status', _value);
-    }
-
-    get cardId() {
-        return this.getAttribute('cardId');
-    }
-
-    set cardId(_value) {
-        this.setAttribute('cardId', _value);
+    get status(){
+        return this.getAttribute('status');
     }
 
     connectedCallback() {
@@ -53,43 +31,49 @@ export default class CardItem extends HTMLElement {
         this.render();
     }
 
-    changeColorByStatus(_status) {
-        if (_status === 'URGENT') {
-            this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#e00e0e';
-        } else if (_status === 'ATTENTION') {
-            this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#ebf30b';
-        } else {
-            this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#ffffff';
-        }
+    // changeColorByStatus(_status) {
+    //     if (_status === 'URGENT') {
+    //         this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#e00e0e';
+    //     } else if (_status === 'ATTENTION') {
+    //         this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#ebf30b';
+    //     } else {
+    //         this.element.getElementById(this.getAttribute('cardId')).style.backgroundColor = '#ffffff';
+    //     }
+    // }
+
+    resolveTask(_event) {
+        this.data.status = statusValues.filter(i => i === 'white')
     }
 
-    changeData(_event) {
-        const status = this.getAttribute('status');
-        if (status) {
-            this.changeColorByStatus(status);
-        }
-    }
-
-    setupEvent() {
+    setupEvents() {
         this.element.addEventListener('change', this.changeData.bind(this));
+        this.element.getElementById('buttonResolve').addEventListener('click', this.resolveTask.bind(this));
+    }
+
+    removeEvents() {
+        this.element.getElementById('buttonResolve').remove('click', this.resolveTask)
     }
 
     render() {
-        this.element.innerHTML = `
-            <div class="col mb-4">
+        if (!this.data) {
+            return;
+        }
+
+        this.element.innerHTML = `<div class="col mb-4">
                 <div class="card">
-                    <div class="card text-bg-${this.getAttribute('status')}" style="max-width: 40rem;">
-                      <div class="card-header" id="${this.getAttribute('cardId')}">Header</div>
+                    <div class="card text-bg-${this.data.status}" style="max-width: 40rem;">
+                      <div class="card-header" id="${this.data.cardId}">Header</div>
                       <div class="card-body">
-                        <h5 class="card-title">${this.getAttribute('title')}</h5>
-                        <p class="card-text">${this.getAttribute('content')}</p>
+                        <h5 class="card-title">${this.data.title}</h5>
+                        <p class="card-text">${this.data.content}</p>
+                      <button type="button" class="btn btn-outline-light btn-sm" id="buttonResolve">Resolve</button>
                       </div>
                     </div>
                 </div>
             </div>
             <link rel="stylesheet" href="../css/bootstrap.min.css">
             `;
-        this.setupEvent();
+        this.setupEvents();
     }
 
 }

@@ -213,3 +213,11 @@ export const groupsEnum = [
     }
 ]
 
+
+export const statusValues = [
+    'primary',
+    'secondary',
+    'danger',
+    'white',
+    'success',
+]

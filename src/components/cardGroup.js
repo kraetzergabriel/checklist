@@ -27,10 +27,6 @@ export class CardGroup extends HTMLElement {
         }
     }
 
-    static get observedAttributes() {
-        return ['list'];
-    }
-
     connectedCallback() {
         this.body();
         this.setupEvent();
@@ -60,22 +56,9 @@ export class CardGroup extends HTMLElement {
         this.element.addEventListener('change', this.changeData.bind(this));
     }
 
-    get list() {
-        return this.getAttribute('list')
-    }
-
-    set list(_value) {
-        this.setAttribute('list', _value)
-    }
-
     createCard(_data) {
         const card = document.createElement('card-item');
-
-        card.setAttribute('title', _data.title);
-        card.setAttribute('content', _data.content);
-        card.setAttribute('cardId', _data.cardId);
-        card.setAttribute('status', _data.status);
-
+        card.data = _data;
         return card;
     }
 

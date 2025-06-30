@@ -10,24 +10,42 @@ export const knowingHosts = {
 class Events {
 
     constructor() {
-        this.data = {};
+        this.loadData();
+        console.log(this.data);
     }
 
-    saveCard(jsonData) {
-        if (!jsonData.cardId || this.data.card.filter(i => i.cardId === jsonData.cardId).length === 0) {
-            this.data.card.push(jsonData);
+    loadData() {
+        this.data = JSON.parse(fs.readFileSync('./data.json'));
+    }
 
-            return;
+    getNextCardId() {
+        if (this.data.card.length === 0) {
+            return 1;
         }
-
-        this.data.card.forEach((item, index) => {
-            if (item.cardId === jsonData.cardId) {
-                this[index] = jsonData;
-            }
-        });
+        return this.data.card
+            .reduce((result, item) => item.cardId >= result ? result.cardId + 1: result).cardId;
     }
 
-    saveChecklist(jsonData) {
+    saveCard(req,res,jsonData) {
+        try {
+            if (jsonData.cardId || this.data.card.filter(i => i.cardId === jsonData.cardId).length === 0) {
+                jsonData.cardId = this.getNextCardId();
+                this.data.card.push(jsonData);
+            }
+
+            // this.data.card.forEach((item, index) => {
+            //     if (item.cardId === jsonData.cardId) {
+            //         this[index] = jsonData;
+            //     }
+            // });
+            return Promise.resolve();
+        } catch (err) {
+            console.log(err);
+            return Promise.resolve(err)
+        }
+    }
+
+    saveChecklist(req,res,jsonData) {
         this.data.checklist.forEach((item, index) => {
             if (item.header.filter(i => i.id === 'usCode' && i.value === jsonData.usCode)) {
                 this[index] = jsonData;
@@ -68,12 +86,14 @@ class Events {
         });
 
         req.on('end', () => {
-            const jsonData = JSON.parse(body);
-            const method = this[knowingHosts[req.url]];
-            if (method) {
-                fs.promises(method(jsonData))
-                    .then(() => this.saveFile(req, res, this.data));
-            }
+            try {
+                const jsonData = JSON.parse(body);
+                if (!!this[knowingHosts[req.url]]) {
+                    // TODO remover o fs.promises para ações dentro da class Event
+                    this[knowingHosts[req.url]](req, res, jsonData)
+                        .then((err) => this.saveFile(req,res,this.data));
+                }
+            } catch (err) {console.log(err)}
         })
     }
 }
