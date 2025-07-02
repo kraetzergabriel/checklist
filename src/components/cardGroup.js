@@ -64,7 +64,7 @@ export class CardGroup extends HTMLElement {
 
     createCardList(_list) {
         if (_list && _list.length > 0)
-        _list.forEach((item) => {
+        _list.sort().forEach((item) => {
             this.element.getElementById('divListItems').appendChild(this.createCard(item));
         })
     }

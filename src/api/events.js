@@ -22,15 +22,18 @@ class Events {
         if (this.data.card.length === 0) {
             return 1;
         }
-        return this.data.card
-            .reduce((result, item) => item.cardId >= result ? result.cardId + 1: result).cardId;
+        return this.data.card.length+1;
     }
 
     saveCard(req,res,jsonData) {
         try {
-            if (jsonData.cardId || this.data.card.filter(i => i.cardId === jsonData.cardId).length === 0) {
+            const index = this.data.card.findIndex(i => i.cardId === jsonData.cardId)
+
+            if (index === -1) {
                 jsonData.cardId = this.getNextCardId();
                 this.data.card.push(jsonData);
+            } else {
+                this.data.card[index] = jsonData;
             }
 
             // this.data.card.forEach((item, index) => {

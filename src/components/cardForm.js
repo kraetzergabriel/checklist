@@ -8,9 +8,9 @@ export default class CardForm extends HTMLElement {
     }
 
     clearFields() {
-        this.element.getElementById('title').value;
-        this.element.getElementById('content').value;
-        this.element.getElementById('status').value;
+        this.element.getElementById('title').value = '';
+        this.element.getElementById('content').value = '';
+        this.element.getElementById('status').value = '';
     }
 
     save(_event) {
@@ -34,7 +34,10 @@ export default class CardForm extends HTMLElement {
 
     setStatus() {
         statusValues.forEach(item => {
-            document.getElementById('status').appendChild(`<option value="${item}">${item}</option>`)
+            const option = document.createElement('option');//`<option value="${item}">${item}</option>`
+            option.value = item;
+            option.text = item;
+            this.element.getElementById('status').append(option);
         })
     }
 
@@ -49,12 +52,12 @@ export default class CardForm extends HTMLElement {
                       
                       <select class="form-select" aria-label="Default select example" id="status">
                           <option selected>Status</option>
-                          
-                          <option value="primary">primary</option>
-                          <option value="secondary">secondary</option>
-                          <option value="danger">danger</option>
-                          <option value="white">white</option>
-                          <option value="success">success</option>
+<!--                          -->
+<!--                          <option value="primary">primary</option>-->
+<!--                          <option value="secondary">secondary</option>-->
+<!--                          <option value="danger">danger</option>-->
+<!--                          <option value="white">white</option>-->
+<!--                          <option value="success">success</option>-->
                         </select>
                     </div>
                     <div class="coll-md-12 input-group-text">

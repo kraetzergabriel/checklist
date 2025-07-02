@@ -1,12 +1,5 @@
 {
-  "card": [
-    {
-      "title": "teste",
-      "content": "teste",
-      "status": "primary",
-      "cardId": 1
-    }
-  ],
+  "card": [],
   "checklist": [
     {
       "header": [

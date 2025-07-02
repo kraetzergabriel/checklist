@@ -219,5 +219,5 @@ export const statusValues = [
     'secondary',
     'danger',
     'white',
-    'success',
+    // 'success',
 ]

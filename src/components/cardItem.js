@@ -1,4 +1,5 @@
-import {statusValues} from "../static/static";
+import {statusValues} from "../static/static.js";
+import {api} from "../api/api.js";
 
 export default class CardItem extends HTMLElement {
     constructor() {
@@ -42,11 +43,14 @@ export default class CardItem extends HTMLElement {
     // }
 
     resolveTask(_event) {
-        this.data.status = statusValues.filter(i => i === 'white')
+        this.data.status = 'success';
+        this.data.resolved = true;
+        this.status = this.data.status;
+        api.saveCard(this.data);
     }
 
     setupEvents() {
-        this.element.addEventListener('change', this.changeData.bind(this));
+        // this.element.addEventListener('change', this.changeData.bind(this));
         this.element.getElementById('buttonResolve').addEventListener('click', this.resolveTask.bind(this));
     }
 
@@ -66,7 +70,7 @@ export default class CardItem extends HTMLElement {
                       <div class="card-body">
                         <h5 class="card-title">${this.data.title}</h5>
                         <p class="card-text">${this.data.content}</p>
-                      <button type="button" class="btn btn-outline-light btn-sm" id="buttonResolve">Resolve</button>
+                      <button type="button" class="btn btn-outline-light btn-sm" style="${this.data.resolved ? "display:none":""}" id="buttonResolve">Resolve</button>
                       </div>
                     </div>
                 </div>
